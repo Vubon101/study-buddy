@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Blaka&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  font-family: "Raleway", sans-serif;
+}
+
+/* ====== Base Styles ====== */
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+.wrapper {
+  height: 100vh;
+  background-image: url(images/8-bit-graphics-pixels-scene-with-city-sunset.jpg); /* Test Image */
+  background-size: cover;
+  background-position: center;
+  backdrop-filter: brightness(10px); /* Apply brightness filter to the background */
+  -webkit-backdrop-filter: brightness(10px); /* Safari support */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* ====== Navigation Bar ====== */
+.navbg {
+  padding: 0 2%;
+  width: 96vw;
+  height: 90px;
+  background: rgba(38, 52, 73, 0.075);
+  backdrop-filter: blur(10%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.5px solid #EF9651;
+}
+
+/* ====== Progress Bar ====== */
+.progress-container {
+  width: 100%;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  height: 20px;
+}
+
+.progress-bar {
+  width: 0%;
+  background-color: #EF9651;
+  height: 100%;
+  border-radius: 10px;
+}
+
+/* ====== Horizontal and Vertical Lines ====== */
+.v-line {
+  width: 1px;
+  height: 45px;
+  background-color: rgba(255, 255, 255, 0.568);
+}
+
+.h-line {
+  width: 95%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.568);
+}
+
+/* ====== Timer Goal Section ====== */
+.tm-form-goal {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row-reverse;
+  margin: 40px 0;
+}
+
+.time-goal {
+  width: 45%;
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 2px solid #EF9651;
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: baseline;
+  align-items: center;
+}
+
+.goal-but {
+  display: flex;
+  gap: 20px;
+}
+
+.goal-stat {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ====== Form Styles ====== */
+.form-container {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: 0.8rem 1rem;
+  border: 2px solid #EF9651;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  width: 150px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #ffffff7a;
+}
+
+/* ====== Upcoming Section ====== */
+.up-comming {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.hu-line {
+  width: 80%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ====== Cards Container ====== */
+.card-container {
+  width: 100%;
+  height: max-content;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  width: 15%;
+  height: 300px;
+  color: white;
+  border: 1px solid #EF9651;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-text{
+  height: 80%;
+
+}
+
+.card:hover {
+  width: 16%;
+  height: 310px;
+  transition: 0.5s ease-in-out all;
+}
+
+/* ====== Button Styles ====== */
+button {
+  background-color: #EF9651;
+  padding: 10px 30px;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px #b4713d;
+  color: white;
+  font-weight: bold;
+  border: #f3f3f3 solid 1px;
+  cursor: pointer;
+}
+
+button:active {
+  transition: 0.2s ease box-shadow;
+  box-shadow: 0px 0px 0px #EF9651;
+}
+
+.delete-but {
+  background-color: #EF9651;
+  padding: 10px 30px;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px #b4713d;
+  color: white;
+  font-weight: bold;
+  border: #f3f3f3 solid 1px;
+  cursor: pointer;
+}
+
+.delete-but:hover {
+  background-color: #f53a34;
+  box-shadow: 4px 4px 0px #b43d3d;
+}
+
+.delete-but:hover:active {
+  transition: 0.2s ease box-shadow;
+  box-shadow: 0px 0px 0px #EF9651;
+}

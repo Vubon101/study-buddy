@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timefy</title>
+  <link rel="stylesheet" href="study buddy.css">
+</head>
+<body>
+  <audio id="alert-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+  <div class="wrapper">
+
+    <!-- Navigation Bar -->
+    <div class="navbg">
+      <h1>Timefy</h1>
+      <div class="nav_comp">
+        <h1 id="Name">Name</h1>
+      </div>
+    </div>
+
+    <!-- Timer and Goal Form Section -->
+    <div class="tm-form-goal">
+
+            <!-- Time Goal Section -->
+            <div class="time-goal">
+              <div style="display: flex; flex-direction: row; width: 100%; justify-content: left;">
+                <h2>Time Goal</h2>
+              </div>
+              <div class="h-line"></div>
+      
+              <div class="goal-stat">
+                
+      
+                <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%;">
+                <h3></h3>  <!--  title of the ongoing activity -->
+                  
+                  <h3></h3>  <!--  time spent in activity / total time of activity -->
+                </div>
+              </div>
+      
+              <div class="progress-container">
+                <div class="progress-bar"></div>
+              </div>
+      
+              <div class="goal-but">
+                <button class="button" style="margin-top: 10px;">Pause</button>
+                <button class="button" style="margin-top: 10px;">Resume</button>
+              </div>
+              <button id="continue-btn" style="display: none; margin-top: 10px;">Continue</button>
+
+            </div>
+
+      <div class="form-container">
+
+        <!-- Input Form -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="topic">Subject+Topic</label>
+            <input type="text" id="topic" placeholder="eg. Maths, Addition" />
+          </div>
+          <div class="form-group">
+            <label for="time">Total Time</label>
+            <input type="text" id="time" placeholder="eg. 2 h 30 min" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reason">Reason</label>
+            <input type="text" id="reason" placeholder="eg. For Test" />
+          </div>
+          <div class="form-group">
+            <label for="hardness">Hardness /10</label>
+            <input type="text" id="hardness" placeholder="eg. 7" />
+          </div>
+        </div>
+
+        <!-- Button to Generate Plan -->
+        <button class="generate-btn">Generate Plan</button>
+      </div>
+    </div>
+
+    <!-- Cards Container -->
+    <div class="card-container">
+      <div class="card">
+        <div class="card-text">
+          <h2></h2>
+          <h3></h3>
+          <p></p>
+        </div>
+        <button class="delete-but">Delete</button>
+      </div>
+      <div class="card">
+        <div class="card-text">
+          <h2></h2>
+          <h3></h3>
+          <p></p>
+        </div>
+        <button class="delete-but">Delete</button>
+      </div>
+      <div class="card">
+        <div class="card-text">
+          <h2></h2>
+          <h3></h3>
+          <p></p>
+        </div>
+        <button class="delete-but">Delete</button>
+      </div>
+      <div class="card">
+        <div class="card-text">
+          <h2></h2>
+          <h3></h3>
+          <p></p>
+        </div>
+        <button class="delete-but">Delete</button>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <script>
+    const generateBtn = document.querySelector('.generate-btn');
+    const cards = document.querySelectorAll('.card');
+  
+    const progressBar = document.querySelector('.progress-bar');
+    const activityTitle = document.querySelector('.goal-stat h3:first-child');
+    const activityTime = document.querySelector('.goal-stat h3:last-child');
+    const pauseBtn = document.querySelector('.goal-but .button:nth-child(1)');
+    const resumeBtn = document.querySelector('.goal-but .button:nth-child(2)');
+    const alertSound = document.getElementById('alert-sound');
+    const continueBtn = document.getElementById('continue-btn');
+  
+    let timerInterval = null;
+    let elapsedSeconds = 0;
+    let currentStepIndex = 0;
+    let plan = [];
+    let isPaused = false;
+    let isWaitingToContinue = false;
+  
+    function formatTimeDisplay(minutesTotal) {
+      const hours = Math.floor(minutesTotal / 60);
+      const mins = minutesTotal % 60;
+      return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    }
+  
+    function updateTimerUI(elapsed, total) {
+      const spentMin = Math.floor(elapsed / 60);
+      const totalMin = Math.floor(total / 60);
+      activityTime.textContent = `${formatTimeDisplay(spentMin)}/${formatTimeDisplay(totalMin)}`;
+      const percent = (elapsed / total) * 100;
+      progressBar.style.width = `${percent}%`;
+    }
+  
+    function startStep(index) {
+      if (index >= plan.length) {
+        clearInterval(timerInterval);
+        activityTitle.textContent = "Done!";
+        activityTime.textContent = "00:00/00:00";
+        progressBar.style.width = "0%";
+        return;
+      }
+  
+      const step = plan[index];
+      activityTitle.textContent = step.title;
+      const durationInSeconds = step.durationMin * 60;
+      elapsedSeconds = 0;
+      updateTimerUI(0, durationInSeconds);
+      isWaitingToContinue = false;
+      continueBtn.style.display = "none";
+  
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!isPaused && !isWaitingToContinue) {
+          elapsedSeconds++;
+          if (elapsedSeconds >= durationInSeconds) {
+            clearInterval(timerInterval);
+  
+            // Play alert sound and wait for user confirmation
+            alertSound.play();
+            isWaitingToContinue = true;
+            continueBtn.style.display = "inline-block";
+  
+            // Remove completed card
+            if (cards[index]) {
+              cards[index].style.display = "none";
+            }
+          } else {
+            updateTimerUI(elapsedSeconds, durationInSeconds);
+          }
+        }
+      }, 1000);
+    }
+  
+    continueBtn.addEventListener('click', () => {
+      continueBtn.style.display = "none";
+      isWaitingToContinue = false;
+      currentStepIndex++;
+      startStep(currentStepIndex);
+    });
+  
+    pauseBtn.addEventListener('click', () => {
+      isPaused = true;
+    });
+  
+    resumeBtn.addEventListener('click', () => {
+      isPaused = false;
+    });
+  
+    function generateStudyPlan({ topic, time, reason, hardness }) {
+      return [
+        {
+          title: "Warm-Up",
+          duration: "00:10",
+          durationMin: 10,
+          tasks: [
+            `Review key concepts in ${topic}`,
+            "Skim notes or textbook examples"
+          ]
+        },
+        {
+          title: "Main Focus",
+          duration: "01:20",
+          durationMin: 80,
+          tasks: [
+            `Practice problems on ${topic}`,
+            `Focus on weak spots (Hardness: ${hardness}/10)`,
+            `Study for: ${reason}`
+          ]
+        },
+        {
+          title: "Review",
+          duration: "00:20",
+          durationMin: 20,
+          tasks: [
+            "Go through mistakes from practice",
+            "Flashcards or memory recall",
+            "Summarize key takeaways"
+          ]
+        },
+        {
+          title: "Wrap-Up",
+          duration: "00:10",
+          durationMin: 10,
+          tasks: [
+            "Final review",
+            "Write questions for tutor",
+            "Mindfulness break"
+          ]
+        }
+      ];
+    }
+  
+    generateBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+  
+      const topic = document.getElementById('topic')?.value.trim();
+      const time = document.getElementById('time')?.value.trim();
+      const reason = document.getElementById('reason')?.value.trim();
+      const hardness = document.getElementById('hardness')?.value.trim();
+  
+      if (!topic || !time || !reason || !hardness) {
+        alert("Please fill out all fields.");
+        return;
+      }
+  
+      plan = generateStudyPlan({ topic, time, reason, hardness });
+      currentStepIndex = 0;
+  
+      cards.forEach((card, index) => {
+        const contentDiv = card.querySelector('div');
+        const deleteBtn = card.querySelector('.delete-but');
+  
+        if (plan[index]) {
+          const block = plan[index];
+          contentDiv.innerHTML = '';
+  
+          const title = document.createElement('h2');
+          title.textContent = block.title;
+  
+          const duration = document.createElement('h3');
+          duration.textContent = block.duration;
+  
+          contentDiv.appendChild(title);
+          contentDiv.appendChild(duration);
+  
+          block.tasks.forEach(task => {
+            const p = document.createElement('p');
+            p.textContent = task;
+            contentDiv.appendChild(p);
+          });
+  
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+  
+        deleteBtn.addEventListener('click', () => {
+          card.style.display = 'none';
+        });
+      });
+  
+      startStep(0);
+    });
+  </script>
+  
+
+  
+
+</body>
+</html>
